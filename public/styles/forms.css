@@ -3,6 +3,42 @@ form {
   margin: 2rem auto;
 }
 
+#sign-up-form {
+  max-width: 50rem;
+  border-radius: 8px;
+  padding: 2rem;
+  margin: 2rem auto;
+  background-color: #dcccfc;
+}
+
+#sign-up-form h1 {
+  font-size: 5rem;
+}
+
+#sign-up-form label {
+  font-size: 2rem;
+}
+#sign-up-form input {
+  border-radius: 8px;
+}
+#sign-up-form button {
+  cursor: pointer;
+  font: inherit;
+  font-size: 2rem;
+  background-color: rgb(89, 0, 255);
+  border: 1px solid rgb(89, 0, 255);
+  color: white;
+  margin: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+}
+
+#sign-up-form button:hover {
+  background-color: rgb(71, 4, 196);
+  border-color: rgb(71, 4, 196);
+  color: white;
+}
+
 h1 {
   text-align: center;
 }
@@ -13,7 +49,9 @@ label {
   margin-bottom: 0.25rem;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   font: inherit;
   padding: 0.5rem;
   border-radius: 4px;
@@ -25,7 +63,8 @@ textarea:focus {
   background-color: rgb(237, 228, 255);
 }
 
-input, textarea {
+input,
+textarea {
   width: 100%;
 }
 

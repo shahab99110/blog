@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('includes/head', { title: 'Sign Ip' }) %>
+    <link rel="stylesheet" href="/styles/forms.css" />
+  </head>
+  <body>
+    <%- include('includes/header') %>
+    <main>
+      <form action="/signin" method="POST" id="sign-up-form">
+        <h1>Sign In</h1>
+        <% if(inputData.hasError) { %>
+
+          <p id="input-error"><%= inputData.message %></p>
+  
+          <% } %>
+        <label for="user-email">Your Email Id</label>
+        <input type="email" name="email" id="user-email" required />
+        <label for="user-password">Enter your Password</label>
+        <input type="password" name="password" id="password" required />
+        <button type="submit">Sign In</button>
+        <button type="reset">Cancel</button>
+      </form>
+    </main>
+  </body>
+</html>

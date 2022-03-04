@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('includes/head', { title: 'Sign Up' }) %>
+    <link rel="stylesheet" href="/styles/forms.css" />
+  </head>
+  <body>
+    <%- include('includes/header') %>
+    <main>
+      <form action="/signup" method="POST" id="sign-up-form">
+        <h1>Sign Up</h1>
+        <% if(inputData.hasError) { %>
+
+        <p id="input-error"><%= inputData.message %></p>
+
+        <% } %>
+        <label for="user-email">Your Email Id</label>
+        <input type="email" name="email" id="user-email" value="<%= inputData.email %>" required />
+        <label for="confirm-user-email">Conform Your Email Id</label>
+        <input
+          type="email"
+          name="confirmEmail"
+          id="confirm-user-email"
+          value="<%= inputData.confirmEmail %>"
+          required
+        />
+        <label for="user-password">Enter your Password</label>
+        <input type="password" name="password" id="password" value="<%= inputData.password %>" required />
+        <button type="submit">Submit</button>
+        <button type="reset">Cancel</button>
+      </form>
+    </main>
+  </body>
+</html>
