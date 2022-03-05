@@ -1,14 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <%- include('includes/head', { title: 'Admin Dashboard' }) %>
-    <link rel="stylesheet" href="/styles/forms.css" />
+    <%- include('includes/head', { title: 'All Posts' }) %>
+    <link rel="stylesheet" href="/styles/posts.css" />
   </head>
+
   <body>
     <%- include('includes/header') %>
-    <main>
-        <h1>This is the admin dashboard</h1>
-        <p>Your are being redirected to this only after authenticating from the signin and signup</p>
+    <main id="all-posts">
+      <h1>ADMIN AREA</h1>
+      <% if (!result || result.length === 0) { %>
+      <p>No posts found - maybe start creating some?</p>
+      <a class="btn" href="/new-post">Create a new Post</a>
+      <% } else { %>
+        <h2>All Posts</h2>
+      <ol id="posts-list">
+        <% for (const post of result) { %>
+        <li><%- include('includes/post-item', { post: post }) %></li>
+        <% } %>
+      </ol>
+      <% } %>
     </main>
   </body>
 </html>

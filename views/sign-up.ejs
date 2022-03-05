@@ -14,18 +14,16 @@
         <p id="input-error"><%= inputData.message %></p>
 
         <% } %>
-        <label for="user-email">Your Email Id</label>
+        <label for="fullName">Enter Your Full Name</label>
+        <input type="text" name="name" id="fullName" value="<%= inputData.name %>">
+        <label for="userName">Enter Your Username</label>
+        <input type="text" name="userName" id="userName" value="<%= inputData.userName %>">
+        <label for="user-email">Enter Your Email Id</label>
         <input type="email" name="email" id="user-email" value="<%= inputData.email %>" required />
-        <label for="confirm-user-email">Conform Your Email Id</label>
-        <input
-          type="email"
-          name="confirmEmail"
-          id="confirm-user-email"
-          value="<%= inputData.confirmEmail %>"
-          required
-        />
-        <label for="user-password">Enter your Password</label>
+        <label for="user-password">Enter Your Password</label>
         <input type="password" name="password" id="password" value="<%= inputData.password %>" required />
+        <label for="confirmPassword">Confirm your Password</label>
+        <input type="password" name="ConfirmPassword" id="confirmPassword" value="<%= inputData.password %>" required />
         <button type="submit">Submit</button>
         <button type="reset">Cancel</button>
       </form>

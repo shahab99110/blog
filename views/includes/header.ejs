@@ -7,12 +7,12 @@
       <li>
         <a href="/posts">All Posts</a>
       </li>
-      <% if(locals.isAuth) { %>}
+      <% if(locals.isAuth) { %>
       <li>
         <a href="/new-post">Create Post</a>
       </li>
       <% } %>
-      <% if(!locals.isAuth) { %>}
+      <% if(!locals.isAuth) { %>
       <li>
         <a href="/sign-up">Sign Up</a>
       </li>
@@ -20,9 +20,9 @@
         <a href="/sign-in">Sign In</a>
       </li>
       <% } %>
-       <% if(locals.isAuth) { %>}
+       <% if(locals.isAuth) { %>
       <li>
-        <a href="/admin">Admin</a>
+        <a href="/admin"><%= locals.users.name %></a>
       </li>
      
       <li>

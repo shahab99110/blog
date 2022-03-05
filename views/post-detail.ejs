@@ -11,7 +11,7 @@
       <h1><%= post.title %></h1>
       <section id="post-meta">
         <address>
-          <a href="mailto:<%= post.author.email %>"><%= post.author.email %></a>
+          <a href="mailto:<%= post.authorEmail %>"><%= post.authorName %></a>
         </address>
         | <time datetime="<%= post.date %>"><%= post.humanReadableDate %></time>
       </section>

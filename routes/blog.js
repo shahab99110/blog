@@ -21,41 +21,36 @@ router.get("/posts", async function (req, res) {
     .getDb()
     .collection("posts")
     .find({})
-    .project({ title: 1, summary: 1, "author.email": 1 })
+    .project({ title: 1, summary: 1, authorName: 1 })
     .toArray();
   res.render("posts-list", { posts: posts });
 });
 
 router.get("/new-post", async function (req, res) {
-  const authors = req.session.user.email;
-  const aUth = await db.getDb().collection('users').findOne({email:authors});
-  // console.log(aUth);
-  const authorsd = await db.getDb().collection("users").find().toArray();
-  res.render("create-post", { authors: aUth });
+  // const authors = req.session.user.email;
+  // const aUth = await db.getDb().collection('users').findOne({email:authors});
+  // // console.log(aUth);
+  // const authorsd = await db.getDb().collection("users").find().toArray();
+  res.render("create-post");
 });
 
 router.post("/posts", async function (req, res) {
-  const authorId = new ObjectId(req.body.author);
-  const author = await db
-    .getDb()
-    .collection("users")
-    .findOne({ _id: authorId });
+  const usersId = new ObjectId(req.session.user.id);
+  const author = await db.getDb().collection("users").findOne({ _id: usersId });
 
   const newPost = {
     title: req.body.title,
     summary: req.body.summary,
     body: req.body.content,
     date: new Date(),
-    author: {
-      id: authorId,
-      // name: author.name,
-      email: author.email,
-    },
+    authorID:usersId,
+    authorName: author.name,
+    authorEmail:author.email,
   };
 
   const result = await db.getDb().collection("posts").insertOne(newPost);
   console.log(result);
-  res.redirect("/posts");
+  res.redirect("/");
 });
 
 router.get("/posts/:id", async function (req, res, next) {
@@ -140,9 +135,9 @@ router.get("/sign-up", function (req, res) {
   if (!sessioninputData) {
     sessioninputData = {
       hasError: false,
+      name: "",
+      userName: "",
       email: "",
-      confirmEmail: "",
-      password: "",
     };
   }
   req.session.inputData = null;
@@ -151,31 +146,34 @@ router.get("/sign-up", function (req, res) {
 
 router.post("/signup", async function (req, res) {
   const userData = req.body;
+  const enteredName = userData.name;
+  const enteredUserName = userData.userName;
   const enteredEmail = userData.email;
-  const enteredConfirmEmail = userData.confirmEmail;
   const enteredPassword = userData.password;
+  const enteredConfirmPassword = userData.confirmPassword;
 
-  if (
-    !enteredEmail ||
-    !enteredConfirmEmail ||
-    !enteredPassword ||
-    enteredPassword.trim().length < 6 ||
-    enteredEmail !== enteredConfirmEmail ||
-    !enteredEmail.includes("@")
-  ) {
-    req.session.inputData = {
-      hasError: true,
-      message: "invalid input- please try again",
-      email: enteredEmail,
-      confirmEmail: enteredConfirmEmail,
-      password: enteredPassword,
-    };
-    req.session.save(function () {
-      console.log("Incorrect data");
-      res.redirect("/sign-up");
-    });
-    return;
-  }
+  // if (
+  //   !enteredEmail ||
+  //   !enteredConfirmPassword ||
+  //   !enteredPassword ||
+  //   enteredPassword.trim().length < 6 ||
+  //   enteredPassword !== enteredConfirmPassword ||
+  //   !enteredEmail.includes("@")
+  // ) {
+  //   req.session.inputData = {
+  //     hasError: true,
+  //     message: "invalid input- please try again",
+  //     name:enteredName,
+  //     userName: enteredUserName,
+  //     email: enteredEmail,
+
+  //   };
+  //   req.session.save(function () {
+  //     console.log("Incorrect data");
+  //     res.redirect("/sign-up");
+  //   });
+  //   return;
+  // }
   const existingUser = await db
     .getDb()
     .collection("users")
@@ -185,21 +183,41 @@ router.post("/signup", async function (req, res) {
     req.session.inputData = {
       hasError: true,
       message: "Email already in use",
+      name: enteredName,
+      userName: enteredUserName,
       email: enteredEmail,
-      confirmEmail: enteredConfirmEmail,
-      password: enteredPassword,
     };
     req.session.save(function () {
       console.log("Email already in use");
       return res.redirect("sign-up");
     });
 
+    const existingUserUserName = await db
+      .getDb()
+      .collection("users")
+      .findOne({ userName: enteredUserName });
+
+    if (existingUserUserName) {
+      req.session.inputData = {
+        hasError: true,
+        message: "User Name already in use",
+        name: enteredName,
+        userName: enteredUserName,
+        email: enteredEmail,
+      };
+      req.session.save(function () {
+        console.log("User Name already in use");
+        return res.redirect("sign-up");
+      });
+    }
     return;
   }
 
   const hashPassword = await bcrypt.hash(enteredPassword, 12);
 
   const user = {
+    name: enteredName,
+    userName: enteredUserName,
     email: enteredEmail,
     password: hashPassword,
   };
@@ -214,13 +232,14 @@ router.get("/sign-in", function (req, res) {
   if (!sessioninputData) {
     sessioninputData = {
       hasError: false,
+      name: "",
       email: "",
-      confirmEmail: "",
       password: "",
+      confirmPassword: "",
     };
   }
   req.session.inputData = null;
-  res.render("sign-in", {inputData: sessioninputData});
+  res.render("sign-in", { inputData: sessioninputData });
 });
 
 router.post("/signin", async function (req, res) {
@@ -234,17 +253,16 @@ router.post("/signin", async function (req, res) {
     .findOne({ email: enteredEmail });
 
   if (!existingUser) {
-
     req.session.inputData = {
       hasError: true,
       message: "Invalid email or password - Please try again",
       email: enteredEmail,
       password: enteredPassword,
-    }
-    req.session.save(function(){
+    };
+    req.session.save(function () {
       console.log("invalid email or password");
       res.redirect("/sign-in");
-    })
+    });
     return;
   }
 
@@ -259,27 +277,29 @@ router.post("/signin", async function (req, res) {
       message: "Invalid email or password - Please try again",
       email: enteredEmail,
       password: enteredPassword,
-    }
-    req.session.save(function(){
+    };
+    req.session.save(function () {
       console.log("invalid email or password");
       res.redirect("/sign-in");
-    })
+    });
     return;
   }
-  req.session.user = { id: existingUser._id, email: existingUser.email };
+  req.session.user = { id: existingUser._id, email: existingUser.email, name: existingUser.userName };
   req.session.isAuthenticated = true;
   req.session.save(function () {
-    console.log("user authenticated");
+    console.log(existingUser);
     res.redirect("/admin");
   });
 });
 
-router.get("/admin", function (req, res) {
+router.get("/admin", async function (req, res) {
   if (!req.session.isAuthenticated) {
     return res.render("401");
   }
+  const userId = new ObjectId(req.session.user.id);
+  const result = await db.getDb().collection("posts").find({authorID:userId}).toArray();
   console.log("you are on admin page");
-  res.render("admin");
+  res.render("admin", {result:result});
 });
 
 router.get("/log-out", function (req, res) {

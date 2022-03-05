@@ -4,19 +4,20 @@ form {
 }
 
 #sign-up-form {
-  max-width: 50rem;
+  max-width: 40rem;
   border-radius: 8px;
   padding: 2rem;
-  margin: 2rem auto;
+  margin: 0 auto;
   background-color: #dcccfc;
 }
 
 #sign-up-form h1 {
-  font-size: 5rem;
+  font-size: 3rem;
+  margin: 0;
 }
 
 #sign-up-form label {
-  font-size: 2rem;
+  font-size: 1.6rem;
 }
 #sign-up-form input {
   border-radius: 8px;

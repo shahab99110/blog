@@ -39,6 +39,7 @@ app.use(async function(req, res, next){
     return next();
   }
   const userDoc = await db.getDb().collection('users').findOne({_id: user.id});
+  res.locals.users = user;
   res.locals.isAuth = isAuth;
   next();
 });
