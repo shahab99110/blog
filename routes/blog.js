@@ -21,21 +21,24 @@ router.get("/posts", async function (req, res) {
     .getDb()
     .collection("posts")
     .find({})
-    .project({ title: 1, summary: 1, "author.name": 1 })
+    .project({ title: 1, summary: 1, "author.email": 1 })
     .toArray();
   res.render("posts-list", { posts: posts });
 });
 
 router.get("/new-post", async function (req, res) {
-  const authors = await db.getDb().collection("authors").find().toArray();
-  res.render("create-post", { authors: authors });
+  const authors = req.session.user.email;
+  const aUth = await db.getDb().collection('users').findOne({email:authors});
+  // console.log(aUth);
+  const authorsd = await db.getDb().collection("users").find().toArray();
+  res.render("create-post", { authors: aUth });
 });
 
 router.post("/posts", async function (req, res) {
   const authorId = new ObjectId(req.body.author);
   const author = await db
     .getDb()
-    .collection("authors")
+    .collection("users")
     .findOne({ _id: authorId });
 
   const newPost = {
@@ -45,7 +48,7 @@ router.post("/posts", async function (req, res) {
     date: new Date(),
     author: {
       id: authorId,
-      name: author.name,
+      // name: author.name,
       email: author.email,
     },
   };
