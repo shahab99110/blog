@@ -323,9 +323,9 @@ router.post("/logout", function (req, res) {
 
 const GOOGLE_CLIENT_ID =
   process.env.GOOGLE_CLIENT_ID ||
-  "779780986432-2n82nk7u1jho2kum1j3628s8gtui52o2.apps.googleusercontent.com"; // replace “7797....” with your client id
+  "...."; // replace “....” with your client id
 const GOOGLE_CLIENT_SECRET =
-  process.env.GOOGLE_CLIENT_SECRET || "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"; // replace “GOCSP.....” with your secret id
+  process.env.GOOGLE_CLIENT_SECRET || "...."; // replace “....” with your secret id
  
 const redirectURI = "auth/google";
 const SERVER_ROOT_URI = "http://localhost:3000"; // server port
