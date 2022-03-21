@@ -2,6 +2,13 @@ const path = require('path');
 
 const express = require('express');
 
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+const jwt = require("jsonwebtoken");
+const axios = require("axios");
+const querystring = require("querystring");
+
+
 const session = require('express-session');
 const mongodbStore = require('connect-mongodb-session');
 
@@ -44,6 +51,21 @@ app.use(async function(req, res, next){
   next();
 });
 
+
+const UI_ROOT_URI = "http://localhost:3000/"; // client port
+app.use(
+  cors({
+    // Sets Access-Control-Allow-Origin to the UI URI
+    origin: UI_ROOT_URI,
+    // Sets Access-Control-Allow-Credentials to true
+    credentials: true,
+  })
+);
+ 
+//middleware for cookieparser
+app.use(cookieParser());
+
+
 app.use(blogRoutes);
 
 app.use(function (error, req, res, next) {
@@ -52,6 +74,9 @@ app.use(function (error, req, res, next) {
   console.log(error);
   res.status(500).render('500');
 });
+
+
+
 
 db.connectToDatabase().then(function () {
   app.listen(3000);

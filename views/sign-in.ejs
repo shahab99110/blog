@@ -11,15 +11,26 @@
         <h1>Sign In</h1>
         <% if(inputData.hasError) { %>
 
-          <p id="input-error"><%= inputData.message %></p>
-  
-          <% } %>
+        <p id="input-error"><%= inputData.message %></p>
+
+        <% } %>
         <label for="user-email">Your Email Id</label>
         <input type="email" name="email" id="user-email" required />
         <label for="user-password">Enter your Password</label>
         <input type="password" name="password" id="password" required />
         <button type="submit">Sign In</button>
         <button type="reset">Cancel</button>
+        <a href="https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fgoogle&client_id=779780986432-2n82nk7u1jho2kum1j3628s8gtui52o2.apps.googleusercontent.com&access_type=offline&response_type=code&prompt=consent&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&flowName=GeneralOAuthFlow">
+          <div class='g-sign-in-button'>
+          <div class=content-wrapper>
+              <div class='logo-wrapper'>
+                  <img src='https://developers.google.com/identity/images/g-logo.png'>
+              </div>
+              <span class='text-container'>
+            <span>Sign in with Google</span>
+          </span>
+          </div>
+      </div></a>
       </form>
     </main>
   </body>

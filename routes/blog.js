@@ -5,6 +5,11 @@ const db = require("../data/database");
 
 const bcrypt = require("bcryptjs");
 const session = require("express-session");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+const jwt = require("jsonwebtoken");
+const axios = require("axios");
+const querystring = require("querystring");
 
 const ObjectId = mongodb.ObjectId;
 
@@ -242,6 +247,7 @@ router.get("/sign-in", function (req, res) {
   res.render("sign-in", { inputData: sessioninputData });
 });
 
+
 router.post("/signin", async function (req, res) {
   const userData = req.body;
   const enteredEmail = userData.email;
@@ -311,3 +317,120 @@ router.post("/logout", function (req, res) {
   req.session.isAuthenticated = false;
   res.redirect("/");
 });
+
+
+//google signin
+
+const GOOGLE_CLIENT_ID =
+  process.env.GOOGLE_CLIENT_ID ||
+  "779780986432-2n82nk7u1jho2kum1j3628s8gtui52o2.apps.googleusercontent.com"; // replace “7797....” with your client id
+const GOOGLE_CLIENT_SECRET =
+  process.env.GOOGLE_CLIENT_SECRET || "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"; // replace “GOCSP.....” with your secret id
+ 
+const redirectURI = "auth/google";
+const SERVER_ROOT_URI = "http://localhost:3000"; // server port
+const JWT_SECRET = "shhhhh";// jwt secret key, name whatever u want
+const COOKIE_NAME = "auth_token";// cookie name, used in JWT later
+
+function getTokens({ code, clientId, clientSecret, redirectUri }) {
+  /*
+   * Uses the code to get tokens
+   * that can be used to fetch the user's profile
+   */
+  const url = "https://oauth2.googleapis.com/token";
+  const values = {
+    code,
+    client_id: clientId,
+    client_secret: clientSecret,
+    redirect_uri: redirectUri,
+    grant_type: "authorization_code",
+  };
+  return axios //we(server) send get request to google for token
+    .post(url, querystring.stringify(values), {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    })  
+    .then((res) => res.data)
+    .catch((error) => {
+      console.error(`Failed to fetch auth tokens`);
+      throw new Error(error.message);
+    });
+}
+ 
+// This is 2nd step: after consent screen, google will automaticaly send get request to “/oauth/google” which is stored in redirecURI(after client secret id)
+router.get(`/${redirectURI}`, async (req, res) => {
+    console.log("after google signin")
+  const code = req.query.code;
+ 
+  const { id_token, access_token } = await getTokens({ // calling function above
+    code,
+    clientId: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
+    redirectUri: `${SERVER_ROOT_URI}/${redirectURI}`,
+  });
+ 
+  // Fetch the user's profile with the access token and bearer
+  const googleUser = await axios
+    .get(
+      `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${access_token}`,
+      {
+        headers: {
+          Authorization: `Bearer ${id_token}`,
+        },
+      }
+    )
+    .then((res) => res.data)
+    .catch((error) => {
+      console.error(`Failed to fetch user`);
+      throw new Error(error.message);
+    });
+ 
+// encryption of token through JWT
+  const token = jwt.sign(googleUser, JWT_SECRET);
+// sending token to user in form of cookie
+  res.cookie(COOKIE_NAME, token, {
+    maxAge: 900000,
+    httpOnly: true,
+    secure: false,
+  });
+console.log(token);
+  res.redirect('admin');
+});
+ 
+router.get("/auth/admin", async (req, res) => {
+    console.log("this is admin dashboard");
+    
+    const decoded = jwt.verify(req.cookies[COOKIE_NAME], JWT_SECRET);
+    const enteredEmail = decoded.email;
+    const enteredName = decoded.name;
+    const enteredUserName = decoded.name;
+    const existingUser = await db
+    .getDb()
+    .collection("users")
+    .findOne({ email: enteredEmail });
+    console.log("till exisiting user")
+    if(!existingUser){
+      const user = {
+        name: enteredName,
+        userName: enteredUserName,
+        email: enteredEmail,
+      };
+      await db.getDb().collection("users").insertOne(user);
+      req.session.user = { id: existingUser._id, email: existingUser.email, name: existingUser.userName };
+  req.session.isAuthenticated = true;
+  req.session.save(function () {
+    console.log(existingUser);
+
+    return res.redirect("/admin");
+  })
+    };
+  req.session.user = { id: existingUser._id, email: existingUser.email, name: existingUser.userName };
+  req.session.isAuthenticated = true;
+  req.session.save(function () {
+    console.log(existingUser);
+
+    res.redirect("/admin");  
+  })
+ 
+  });
