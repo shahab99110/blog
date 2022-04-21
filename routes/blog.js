@@ -18,24 +18,7 @@ const router = express.Router();
 // R O U T E S
 
 
-router.post("/posts", async function (req, res) {
-  const usersId = new ObjectId(req.session.user.id);
-  const author = await db.getDb().collection("users").findOne({ _id: usersId });
 
-  const newPost = {
-    title: req.body.title,
-    summary: req.body.summary,
-    body: req.body.content,
-    date: new Date(),
-    authorID:usersId,
-    authorName: author.name,
-    authorEmail:author.email,
-  };
-
-  const result = await db.getDb().collection("posts").insertOne(newPost);
-  console.log(result);
-  res.redirect("/");
-});
 
 router.get("/posts/:id", async function (req, res, next) {
   let postId = req.params.id;

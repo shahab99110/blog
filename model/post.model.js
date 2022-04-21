@@ -26,6 +26,10 @@ async function addNewPost(){
      await db.getDb().collection("posts").insertOne(newPost);
 }
 
+function getDetailPost(postId){
+
+}
+
 module.exports = {
     getAllPost,
     addNewPost,
