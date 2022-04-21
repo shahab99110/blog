@@ -1,4 +1,4 @@
-const { getAllPost, addNewPost, getDetailPost, editPost } = require("../model/post.model");
+const { getAllPost, addNewPost, getDetailPost, editPost, postDeletePost } = require("../../model/post.model");
 
 async function httpGetAllPost(req, res) {
   const posts = await getAllPost();
@@ -18,21 +18,27 @@ async function httpAddNewPost(req, res) {
   res.redirect("/");
 }
 
-async function httpGetDetailPost(req,res){
-    let postId = req.params.id;
-    const post = await getDetailPost(postId);
-    res.render("post-detail", { post: post });
+async function httpGetDetailPost(req, res) {
+  let postId = req.params.id;
+  const post = await getDetailPost(postId);
+  res.render("post-detail", { post: post });
 }
 
-async function httpGetEditPost(req,res){
-const postId = req.params.id;
-const post = await editPost(postId);
-res.render("update-post", { post: post });
+async function httpGetEditPost(req, res) {
+  const postId = req.params.id;
+  const post = await editPost(postId);
+  res.render("update-post", { post: post });
 }
 
-async function httpPostEditPost(req,res){
+async function httpPostEditPost(req, res) {
   const postId = new ObjectId(req.params.id);
   await postEditPost(postId);
+  res.redirect("/posts");
+}
+
+async function httpPostDeletePost(req, res) {
+  const postId = new ObjectId(req.params.id);
+  await postDeletePost(postId);
   res.redirect("/posts");
 }
 
@@ -43,4 +49,5 @@ module.exports = {
   httpGetDetailPost,
   httpGetEditPost,
   httpPostEditPost,
+  httpPostDeletePost,
 };

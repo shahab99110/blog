@@ -4,7 +4,8 @@ const { httpGetAllPost,
     httpAddNewPost, 
     httpGetDetailPost,
     httpGetEditPost,
-    httpPostEditPost,} = require('./post.controller');
+    httpPostEditPost,
+    httpPostDeletePost} = require('./post.controller');
 
 const postRouter = express.Router();
 
@@ -14,5 +15,6 @@ postRouter.post('/posts', httpAddNewPost)
 postRouter.get('/posts/:id', httpGetDetailPost)
 postRouter.get('/posts/:id/edit', httpGetEditPost)
 postRouter.post('/posts/:id/edit', httpPostEditPost)
+postRouter.post('/posts/:id/delete', httpPostDeletePost)
 
 module.exports = postRouter;

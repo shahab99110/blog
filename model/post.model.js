@@ -84,7 +84,19 @@ async function postEditPost(postId) {
         return;
     } catch (error) {
         return res.status(404).render("404");
-    }
+    }}
+
+  async function postDeletePost(postId){
+      try{
+          await db
+          .getDb()
+          .collection("posts")
+          .deleteOne({ _id: postId });
+          return;
+      } catch(error){
+          return res.status(404).render("404");
+      }
+   } 
 
     module.exports = {
         getAllPost,
@@ -92,4 +104,5 @@ async function postEditPost(postId) {
         getDetailPost,
         editPost,
         postEditPost,
+        postDeletePost,
     }
