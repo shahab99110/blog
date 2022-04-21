@@ -18,17 +18,6 @@ const router = express.Router();
 // R O U T E S
 
 
-
-
-
-router.get("/new-post", async function (req, res) {
-  // const authors = req.session.user.email;
-  // const aUth = await db.getDb().collection('users').findOne({email:authors});
-  // // console.log(aUth);
-  // const authorsd = await db.getDb().collection("users").find().toArray();
-  res.render("create-post");
-});
-
 router.post("/posts", async function (req, res) {
   const usersId = new ObjectId(req.session.user.id);
   const author = await db.getDb().collection("users").findOne({ _id: usersId });

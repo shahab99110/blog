@@ -10,6 +10,23 @@ async function getAllPost(){
     return posts;
 }
 
+async function addNewPost(){
+    const usersId = new ObjectId(req.session.user.id);
+    const author = await db.getDb().collection("users").findOne({ _id: usersId });
+  
+    const newPost = {
+      title: req.body.title,
+      summary: req.body.summary,
+      body: req.body.content,
+      date: new Date(),
+      authorID:usersId,
+      authorName: author.name,
+      authorEmail:author.email,
+    };
+     await db.getDb().collection("posts").insertOne(newPost);
+}
+
 module.exports = {
     getAllPost,
+    addNewPost,
 }
