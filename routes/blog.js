@@ -17,19 +17,9 @@ const router = express.Router();
 
 // R O U T E S
 
-router.get("/", function (req, res) {
-  res.redirect("/posts");
-});
 
-router.get("/posts", async function (req, res) {
-  const posts = await db
-    .getDb()
-    .collection("posts")
-    .find({})
-    .project({ title: 1, summary: 1, authorName: 1 })
-    .toArray();
-  res.render("posts-list", { posts: posts });
-});
+
+
 
 router.get("/new-post", async function (req, res) {
   // const authors = req.session.user.email;
